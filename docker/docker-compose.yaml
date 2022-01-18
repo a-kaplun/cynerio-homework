@@ -1,0 +1,76 @@
+---
+version: '3.9'
+services:
+  api:
+    depends_on:
+      - redis
+      - prometheus
+    build: .
+    environment:
+      - redis_url=redis://redis
+      - redis_password=${REDIS_PASSWORD}
+    restart: on-failure
+    ports:
+      - 5000:5000
+    networks:
+      - api-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+    healthcheck:
+      test: [CMD, wget, --spider, http://localhost:5000/healthcheck]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  redis:
+    image: redis:6-alpine
+    command: /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    restart: on-failure
+    expose:
+      - '6379'
+    networks:
+      - api-network
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/acl/users.acl:/usr/local/etc/redis/users.acl
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2048M
+    healthcheck:
+      test: [CMD, redis-cli, ping, --user, default, --pass, '${REDIS_PASSWORD}']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  prometheus:
+    image: prom/prometheus:v2.32.1
+    volumes:
+      - ./prometheus/config:/etc/prometheus/
+      - ./prometheus/data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+    ports:
+      - 9090:9090
+    networks:
+      - api-network
+    restart: on-failure
+    healthcheck:
+      test: [CMD, wget, --spider, http://localhost:9090/-/healthy]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  api-network:
