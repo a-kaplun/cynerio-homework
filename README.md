@@ -6,7 +6,7 @@
    Details:
    Please find a `Dockerfile` inside of the `docker` folder
    1. I've used a MultiStage Docker build to exclude `poetry` on our Target Image
-   2. Also, I am using the `alpine` based image due to it's small size and relatively small ammount of vulnerabilities
+   2. Also, I am using the `alpine` based image due to it's small size and relatively small amount of vulnerabilities
    3. I didn't added the healthcheck into the Dockerimage (instead we are using the one from the docker-compose file), although it can be done is needed
 
 2. Create a docker-compose file to bring up the service together with Redis and Prometheus.
@@ -74,17 +74,16 @@
        - targets: ["api:5000"]
       metrics_path: "/prom-metrics"
    ```
-   - Also, I've created an additional `volume` map to provide persistency
+   - Also, I've created an additional `volume` map to provide persistency for the `prometheus` data
 
 7. All of the services should be configured with health checks.
 
    Details:
    - Each service was configure with the appropriate `healthcheck` directive
    - For all `HTTP` based services I've chosen to use the `wget --spider` scrape (`alpine` contains `wget` by default), this to prevent the need to install `curl`
-   - For redis, I've used the `redis-cli`, again provide the password with the Environment Variable
+   - For redis, I've used the `redis-cli`, again providing the password with the Environment Variable
 
-8. Also, since the app does not have a health check currently, please write
-   a healthcheck route under `/healthcheck` that will return `{"status": "ok"}`
+8. Also, since the app does not have a health check currently, please write a healthcheck route under `/healthcheck` that will return `{"status": "ok"}`
    whenever it is called.
 
    Details:
