@@ -117,7 +117,14 @@ git clone https://github.com/a-kaplun/cynerio-homework.git
 ```bash
 cd docker
 ```
-3. Start the Docker Compose stack by using the command below:
+
+3. Create a `prometheus/data` folder for data with the appropriate permissions (otherwize the container will fail)
+```bash
+mkdir -p prometheus/data
+sudo chgrp 65534 prometheus/data
+```
+
+4. Start the Docker Compose stack by using the command below:
 ```bash
 docker-compose up -d
 ```
