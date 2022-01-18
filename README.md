@@ -112,6 +112,7 @@
 1. Clone the repo
 ```bash
 git clone https://github.com/a-kaplun/cynerio-homework.git
+cd cynerio-homework
 ```
 2. Inside of the cloned repo, change into the `docker` folder
 ```bash
