@@ -133,3 +133,10 @@ docker-compose up -d
 This will build the new `api` docker image and will start it with the `redis` and the `prometheus` containers
 * All the container will run inside of the new `api-network` network
 * both `api` and `prometheus` services will be exposed on host machine (5000 and 9090 correspondencly)
+
+IMPORANT: Wait for containers to change their status to `healthy` prior you continue to the next step
+
+5. Run the `test.sh` script and check
+```bash
+./test.sh
+```
